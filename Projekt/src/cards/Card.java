@@ -1,6 +1,13 @@
+package cards;
+
+import lombok.Getter;
+
 public abstract class Card {
+    @Getter
     protected String Name;
+    @Getter
     protected char Element;
+    @Getter
     protected int Dmg;
 
     public Card() {
@@ -11,6 +18,7 @@ public abstract class Card {
         this.Element = element;
         this.Dmg = dmg;
     }
+
 
 
 }
