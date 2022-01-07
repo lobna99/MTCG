@@ -86,10 +86,11 @@ public class CardHandler {
                 statement.setString(1, user);
                 ResultSet rs=statement.executeQuery();
                 while(rs.next()){
+                    String id=rs.getString("id");
                     String name=rs.getString("name");
                     double dmg=rs.getDouble("damage");
                     int element=rs.getInt("element");
-                    String response=" | "+name+" | "+dmg+" | "+element+" |";
+                    String response="{\"Id\":\""+id+"\",\"Name\":\""+name+"\",\"Damage\":\""+dmg+"\",\"Element\":\""+element+"\"}";
                     try {
                         respond.writeHttpResponse(HttpStatus.OK,response);
                     } catch (IOException e) {
