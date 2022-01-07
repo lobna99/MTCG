@@ -20,9 +20,8 @@ public class PurchaseHandler {
         PreparedStatement statement = Connection.getConnection().prepareStatement("""
                          SELECT id
                          from packages 
-                         WHERE purchased=false
                          ORDER BY
-                          	RANDOM()
+                          	id ASC
                           LIMIT 1;
                      """);
         ResultSet result=statement.executeQuery();
@@ -32,15 +31,6 @@ public class PurchaseHandler {
         }else{
             return false;
         }
-        //-------------- SET PACKAGE AS PURCHASED
-        PreparedStatement bought = Connection.getConnection().prepareStatement("""
-                         UPDATE packages
-                         SET   purchased=?
-                         WHERE id=?
-                     """);
-        bought.setBoolean(1,true);
-        bought.setInt(2,packageid);
-        bought.execute();
         assignCards(packageid,user);
         //---------- USER PAYED 5 COINS FOR PACKAGE
         PreparedStatement pay = Connection.getConnection().prepareStatement("""
@@ -50,6 +40,7 @@ public class PurchaseHandler {
                      """);
         pay.setString(1,user);
         pay.execute();
+        removePack(packageid);
         return true;
     }
     public void assignCards(int id,String user) throws SQLException {
@@ -93,5 +84,21 @@ public class PurchaseHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void removePack(int id){
+        PreparedStatement statement = null;
+        try {
+            statement = Connection.getConnection().prepareStatement("""
+                         DELETE 
+                         FROM packages
+                         WHERE id=?;
+                         """);
+            statement.setInt(1,id);
+            statement.execute();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
