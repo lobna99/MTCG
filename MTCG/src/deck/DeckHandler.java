@@ -53,7 +53,6 @@ public class DeckHandler {
     }
      public void configureDeck(JsonNode node, String user){
          Responsebuilder respond = Responsebuilder.getInstance();
-         System.out.println(node.get(2).getValueAsText());
          if(node.size()>3) {
          for(int i = 0; i < 4; i++) {
              try {
