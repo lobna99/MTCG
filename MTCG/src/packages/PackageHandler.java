@@ -19,12 +19,11 @@ public class PackageHandler {
 
         PreparedStatement statement = Connection.getConnection().prepareStatement("""
                          INSERT INTO packages
-                         (cost,purchased)
-                         VALUES (?,?)
+                         (cost)
+                         VALUES (?)
                          RETURNING id;   
                      """);
         statement.setInt(1, newPackage.getCost());
-        statement.setBoolean(2, false);
         ResultSet rs=statement.executeQuery();
         rs.next();
         newPackage.setId(rs.getInt(1));
