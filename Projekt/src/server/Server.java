@@ -1,12 +1,10 @@
-package server;
+package main.server;
 
-import java.io.*;
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 
-public class Server implements Runnable {
+public class Server {
 
     private ServerSocket _listener;
     private int port;
@@ -15,14 +13,18 @@ public class Server implements Runnable {
         this.port = port;
     }
 
+    public void start() throws IOException {
+        this.listen();
+    }
+
     public void listen() {
         System.out.println("start server");
 
         try {
-            this._listener = new ServerSocket(this.port, 5);
+            _listener = new ServerSocket(this.port, 5);
             System.out.println("http-server running at: http://localhost:" + this.port);
             while (true) {
-                Socket s = this._listener.accept();
+                Socket s = _listener.accept();
                 RequestHandler requestHandler = new RequestHandler(s);
                 Thread thread = new Thread(requestHandler);
                 thread.start();
@@ -34,20 +36,9 @@ public class Server implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return;
         }
     }
 
-    @Override
-    public void run() {
-        try {
-            _listener.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Runtime.getRuntime().addShutdownHook(new Thread(new Server()));
-        _listener = null;
-        System.out.println("close server");
-    }
+
 }
 

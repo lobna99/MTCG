@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="mockito.all" type="repository">
+    <properties maven-id="org.mockito:mockito-all:2.0.2-beta" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/mockito/mockito-all/2.0.2-beta/mockito-all-2.0.2-beta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

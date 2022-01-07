@@ -1,15 +1,10 @@
-package user;
-
-import lombok.Getter;
+package main.user;
 
 public class User {
-    @Getter
+
     private String Username;
-    @Getter
     private String Password;
-    @Getter
     private int ELO;
-    @Getter
     private int Coins;
 
     public User(String Username,String Password){
@@ -19,6 +14,22 @@ public class User {
         this.Coins=20;
     }
     public void purchasePack(){
+    }
+
+    public int getCoins() {
+        return Coins;
+    }
+
+    public int getELO() {
+        return ELO;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public String getUsername() {
+        return Username;
     }
     //requesttrade()
     //accepttrade()

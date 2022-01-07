@@ -1,8 +1,7 @@
-package db;
+package main.db;
 
 import cards.Card;
 import user.User;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
