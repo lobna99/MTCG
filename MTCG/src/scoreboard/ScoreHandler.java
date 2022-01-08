@@ -23,7 +23,7 @@ public class ScoreHandler {
         PreparedStatement statement = null;
         try {
             statement = Connection.getConnection().prepareStatement("""
-                        SELECT elo
+                        SELECT elo,won,lost
                         from users
                         WHERE username=?
                     """);
@@ -31,7 +31,9 @@ public class ScoreHandler {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 int elo = rs.getInt("elo");
-                String response = "{\"ELO\":\"" + elo + "\"}";
+                int wins = rs.getInt("won");
+                int loses = rs.getInt("lost");
+                String response = "{\"ELO\":\"" + elo + "\",\"Won\":\""+wins+"\",\"Lost\":\""+loses+"\"}";
                 try {
                     respond.writeHttpResponse(HttpStatus.OK, response);
                 } catch (IOException e) {
@@ -64,6 +66,34 @@ public class ScoreHandler {
                 }
             }
             statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void win(String user){
+        try {
+            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
+                    UPDATE users
+                        SET won=won+1,elo=elo+3
+                        WHERE username=?
+                    """);
+            inBattle.setString(1,user);
+            inBattle.execute();
+            inBattle.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void lose(String user){
+        try {
+            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
+                    UPDATE users
+                        SET lost=lost+1,elo=elo-5
+                        WHERE username=?
+                    """);
+            inBattle.setString(1,user);
+            inBattle.execute();
+            inBattle.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
