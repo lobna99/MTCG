@@ -15,89 +15,94 @@ public class DeckHandler {
     private DBconnection Connection;
 
     public DeckHandler() {
-        Connection=DBconnection.getInstance();
+        Connection = DBconnection.getInstance();
     }
 
-    public void getDeck(String user,String getParam)  {
+    public void getDeck(String user, String getParam) {
         Responsebuilder respond = Responsebuilder.getInstance();
         PreparedStatement statement = null;
         try {
             statement = Connection.getConnection().prepareStatement("""
-                             SELECT *
-                             FROM cards
-                             WHERE "user"=?
-                             AND "inDeck"=true;
-                         """);
+                        SELECT *
+                        FROM cards
+                        WHERE "user"=?
+                        AND "inDeck"=true;
+                    """);
             statement.setString(1, user);
-            ResultSet rs=statement.executeQuery();
-            int rows=0;
+            ResultSet rs = statement.executeQuery();
+            int rows = 0;
             String response;
-                while (rs.next()) {
-                    String id = rs.getString("id");
-                    String name = rs.getString("name");
-                    double dmg = rs.getDouble("damage");
-                    int element = rs.getInt("element");
-                    if(getParam!=null){
-                        response = id+","+name+","+dmg+","+element;
-                    }else {
-                        response = "{\"Id\":\"" + id + "\",\"Name\":\"" + name + "\",\"Damage\":\"" + dmg + "\",\"Element\":\"" + element + "\"}";
-                    }
-                    try {
-                        respond.writeHttpResponse(HttpStatus.OK, response);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    rows++;
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                double dmg = rs.getDouble("damage");
+                int element = rs.getInt("element");
+                if (getParam.contains("plain")) {
+                    response = id + "," + name + "," + dmg + "," + element;
+                } else {
+                    response = "{\"Id\":\"" + id + "\",\"Name\":\"" + name + "\",\"Damage\":\"" + dmg + "\",\"Element\":\"" + element + "\"}";
                 }
-                if(rows==0){
-                    respond.writeHttpResponse(HttpStatus.OK, "No Deck is set for this user");
+                try {
+                    respond.writeHttpResponse(HttpStatus.OK, response);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                rows++;
+            }
+            statement.close();
+            if (rows == 0) {
+                respond.writeHttpResponse(HttpStatus.OK, "No Deck is set for this user");
+            }
         } catch (SQLException | IOException throwables) {
             throwables.printStackTrace();
 
         }
     }
-     public void configureDeck(JsonNode node, String user){
-         Responsebuilder respond = Responsebuilder.getInstance();
-         if(node.size()>3) {
-         for(int i = 0; i < 4; i++) {
-             try {
-                     addCardtoDeck(node.get(i).getValueAsText(), user);
-                     respond.writeHttpResponse(HttpStatus.OK, "Deck configurated");
-             } catch (SQLException | IOException e) {
-                 e.printStackTrace();
-                 try {
-                     respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "ERR");
-                 } catch (IOException ex) {
-                     ex.printStackTrace();
-                 }
-             }
-         }
-         }else{
-             try {
-                 throw new Exception("not enough Cards");
-             } catch (Exception e) {
-                 try {
-                     respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "not enough cards");
-                 } catch (IOException ex) {
-                     ex.printStackTrace();
-                 }
-                 e.printStackTrace();
-             }
-         }
-     }
-     public void addCardtoDeck(String id,String user) throws SQLException {
-         PreparedStatement statement = null;
-             statement = Connection.getConnection().prepareStatement("""
-                            UPDATE cards
-                             SET "inDeck"=true
-                             WHERE id=?
-                             AND  "user"=?;
-                         """);
-             statement.setString(1,id);
-             statement.setString(2,user);
-             statement.execute();
-             statement.close();
-     }
+
+    public void configureDeck(JsonNode node, String user) {
+        Responsebuilder respond = Responsebuilder.getInstance();
+        if (node.size() > 3) {
+            for (int i = 0; i < 4; i++) {
+                try {
+                    addCardtoDeck(node.get(i).getValueAsText(), user);
+                    respond.writeHttpResponse(HttpStatus.OK, "Deck configurated");
+                } catch (SQLException | IOException e) {
+                    e.printStackTrace();
+                    try {
+                        respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "ERR");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        } else {
+            try {
+                throw new Exception("not enough Cards");
+            } catch (Exception e) {
+                try {
+                    respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "not enough cards");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void addCardtoDeck(String id, String user) throws SQLException {
+        PreparedStatement statement = null;
+        statement = Connection.getConnection().prepareStatement("""
+                   UPDATE cards
+                    SET "inDeck"=true
+                    WHERE id=?
+                    AND  "user"=?;
+                """);
+        statement.setString(1, id);
+        statement.setString(2, user);
+        statement.execute();
+        statement.close();
+    }
+
 }
 

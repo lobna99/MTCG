@@ -41,6 +41,7 @@ public class PurchaseHandler {
         pay.setString(1,user);
         pay.execute();
         removePack(packageid);
+        statement.close();
         return true;
     }
     public void assignCards(int id,String user) throws SQLException {
@@ -65,7 +66,13 @@ public class PurchaseHandler {
         statement.setString(1,user);
         ResultSet rs=statement.executeQuery();
         rs.next();
-        return rs.getInt(1) < 5;
+        if(rs.getInt(1) < 5){
+            statement.close();
+            return true;
+        }else {
+            statement.close();
+            return false;
+        }
     }
     public void purchasePack(String user){
         Responsebuilder respond=Responsebuilder.getInstance();

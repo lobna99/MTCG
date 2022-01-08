@@ -71,6 +71,7 @@ public class CardHandler {
         statement.setInt(4, newCard.getElement().getElem());
         statement.setInt(5, id);
         statement.execute();
+        statement.close();
     }
 
     public void getAllCards(String user)  {
