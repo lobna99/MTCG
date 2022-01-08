@@ -17,7 +17,8 @@ public class DeckHandler {
     public DeckHandler() {
         Connection=DBconnection.getInstance();
     }
-    public void getDeck(String user)  {
+
+    public void getDeck(String user,String getParam)  {
         Responsebuilder respond = Responsebuilder.getInstance();
         PreparedStatement statement = null;
         try {
@@ -30,12 +31,17 @@ public class DeckHandler {
             statement.setString(1, user);
             ResultSet rs=statement.executeQuery();
             int rows=0;
+            String response;
                 while (rs.next()) {
                     String id = rs.getString("id");
                     String name = rs.getString("name");
                     double dmg = rs.getDouble("damage");
                     int element = rs.getInt("element");
-                    String response = "{\"Id\":\""+id+"\",\"Name\":\""+name+"\",\"Damage\":\""+dmg+"\",\"Element\":\""+element+"\"}";
+                    if(getParam!=null){
+                        response = id+","+name+","+dmg+","+element;
+                    }else {
+                        response = "{\"Id\":\"" + id + "\",\"Name\":\"" + name + "\",\"Damage\":\"" + dmg + "\",\"Element\":\"" + element + "\"}";
+                    }
                     try {
                         respond.writeHttpResponse(HttpStatus.OK, response);
                     } catch (IOException e) {
