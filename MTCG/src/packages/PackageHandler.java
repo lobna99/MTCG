@@ -1,20 +1,17 @@
 package packages;
-
-import db.DBconnection;
-import server.HttpStatus;
-import server.Responsebuilder;
-
+import Http.HttpStatus;
+import db.getDBConnection;
+import response.Response;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PackageHandler {
-    private DBconnection Connection;
+public class PackageHandler implements getDBConnection, Response, PackageHandlerInterface {
 
     public PackageHandler() {
-        Connection=DBconnection.getInstance();
     }
+    //Create new Package
     public void InsertPackage(Package newPackage) throws SQLException {
 
         PreparedStatement statement = Connection.getConnection().prepareStatement("""
@@ -26,18 +23,19 @@ public class PackageHandler {
         statement.setInt(1, newPackage.getCost());
         ResultSet rs=statement.executeQuery();
         rs.next();
-        newPackage.setId(rs.getInt(1));
+        newPackage.setId(rs.getInt(1));//Get id of package so cards can be assigned to this package
     }
+
+
     public Package addPackage(){
-        Responsebuilder response=Responsebuilder.getInstance();
         Package newPack=new Package();
         try {
             InsertPackage(newPack);
-            response.writeHttpResponse(HttpStatus.CREATED,"Pack created");
+            respond.writeHttpResponse(HttpStatus.CREATED,"Pack created");
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             try {
-                response.writeHttpResponse(HttpStatus.BAD_REQUEST,"Pack couldnt be created");
+                respond.writeHttpResponse(HttpStatus.BAD_REQUEST,"Pack couldnt be created");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

@@ -1,21 +1,18 @@
 package cards;
-
-import db.DBconnection;
+import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
 import packages.Package;
-import server.HttpStatus;
-import server.Responsebuilder;
-
+import Http.HttpStatus;
+import response.Responsebuilder;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CardHandler {
-    private DBconnection Connection;
+public class CardHandler implements getDBConnection,CardHandlerInterface {
+
 
     public CardHandler() {
-        Connection=DBconnection.getInstance();
     }
     public void extractnewcards(JsonNode node,Package pack){
         for (int i = 0; i < 5; i++) {
@@ -98,6 +95,7 @@ public class CardHandler {
                         e.printStackTrace();
                     }
                 }
+                rs.close();
                 statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();

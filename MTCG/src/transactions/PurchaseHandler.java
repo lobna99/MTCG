@@ -1,19 +1,17 @@
 package transactions;
 
-import db.DBconnection;
-import server.HttpStatus;
-import server.Responsebuilder;
 
+import Http.HttpStatus;
+import db.getDBConnection;
+import response.Response;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PurchaseHandler {
-    private DBconnection Connection;
+public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface, Response {
 
     public PurchaseHandler() {
-        Connection=DBconnection.getInstance();
     }
     public boolean buyPack(String user) throws SQLException {//purchase Package
         //-------- SELECT RANDOM PACKAGE AND GET ID
@@ -21,14 +19,16 @@ public class PurchaseHandler {
                          SELECT id
                          from packages 
                          ORDER BY
-                          	id ASC
+                          	id
                           LIMIT 1;
                      """);
         ResultSet result=statement.executeQuery();
         int packageid;
         if(result.next()) {
              packageid= result.getInt(1);
+             result.close();
         }else{
+            result.close();
             return false;
         }
         assignCards(packageid,user);
@@ -41,6 +41,7 @@ public class PurchaseHandler {
         pay.setString(1,user);
         pay.execute();
         removePack(packageid);
+        pay.close();
         statement.close();
         return true;
     }
@@ -75,7 +76,6 @@ public class PurchaseHandler {
         }
     }
     public void purchasePack(String user){
-        Responsebuilder respond=Responsebuilder.getInstance();
         try {
             if (!checkifbroke(user)) {
                 if(buyPack(user)) {
@@ -86,9 +86,7 @@ public class PurchaseHandler {
             }else{
                 respond.writeHttpResponse(HttpStatus.BAD_REQUEST,"User doesnt have enough coins");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

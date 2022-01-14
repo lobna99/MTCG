@@ -1,22 +1,19 @@
 package user;
 
-import db.DBconnection;
+import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
-import server.HttpStatus;
-import server.Responsebuilder;
+import Http.HttpStatus;
+import response.Response;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserHandler {
+public class UserHandler implements Response, getDBConnection {
 
-    private Responsebuilder respond=Responsebuilder.getInstance();
-    private DBconnection Connection;
 
     public UserHandler() {
-        Connection=DBconnection.getInstance();
     }
     public void registration(JsonNode node) throws IOException {
         String name= node.get("Username").getValueAsText();
@@ -67,11 +64,13 @@ public class UserHandler {
                         e.printStackTrace();
                     }
                 }
+                rs.close();
                 statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
     }
+
     public void updateUser(String user,JsonNode node){
         PreparedStatement statement = null;
         try {
@@ -88,11 +87,6 @@ public class UserHandler {
             statement.close();
             respond.writeHttpResponse(HttpStatus.OK,"user updated");
         } catch (SQLException | IOException e) {
-            try {
-                respond.writeHttpResponse(HttpStatus.BAD_REQUEST,"ERR");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
             e.printStackTrace();
         }
     }

@@ -1,24 +1,24 @@
 package sessions;
 
-import db.DBconnection;
-import org.codehaus.jackson.JsonNode;
-import server.HttpStatus;
-import server.Responsebuilder;
-import user.User;
 
+import db.getDBConnection;
+import org.codehaus.jackson.JsonNode;
+import Http.HttpStatus;
+import response.Response;
+import user.User;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginHandler {
-    private DBconnection Connection;
+public class LoginHandler implements getDBConnection, Response,LoginHandlerInterface {
+
 
     public LoginHandler() {
-        Connection=DBconnection.getInstance();
+
     }
+
     public void login(JsonNode node){
-        Responsebuilder respond=Responsebuilder.getInstance();
         String name= node.get("Username").getValueAsText();
         String password= node.get("Password").getValueAsText();
         User logged=new User(name,password);
@@ -44,10 +44,12 @@ public class LoginHandler {
         statement.setString(2,user.getPassword());
         ResultSet result=statement.executeQuery();
         if(result.next()){
+            result.close();
             statement.close();
             return true;
 
         }else {
+            result.close();
             statement.close();
             return false;
         }

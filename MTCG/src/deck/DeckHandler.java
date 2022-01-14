@@ -1,25 +1,23 @@
 package deck;
 
-import cards.Card;
-import db.DBconnection;
+import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
-import server.HttpStatus;
-import server.Responsebuilder;
-
+import Http.HttpStatus;
+import response.Response;
+import response.Responsebuilder;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DeckHandler {
-    private DBconnection Connection;
+public class DeckHandler implements getDBConnection, Response,DeckHandlerInterface {
+
 
     public DeckHandler() {
-        Connection = DBconnection.getInstance();
     }
 
+    //Get deck of user
     public void getDeck(String user, String getParam) {
-        Responsebuilder respond = Responsebuilder.getInstance();
         PreparedStatement statement = null;
         try {
             statement = Connection.getConnection().prepareStatement("""
@@ -49,6 +47,7 @@ public class DeckHandler {
                 }
                 rows++;
             }
+            rs.close();
             statement.close();
             if (rows == 0) {
                 respond.writeHttpResponse(HttpStatus.OK, "No Deck is set for this user");
@@ -59,20 +58,15 @@ public class DeckHandler {
         }
     }
 
+    //call all relevant functions tp configureDeck
     public void configureDeck(JsonNode node, String user) {
         Responsebuilder respond = Responsebuilder.getInstance();
         if (node.size() > 3) {
             for (int i = 0; i < 4; i++) {
                 try {
                     addCardtoDeck(node.get(i).getValueAsText(), user);
-                    respond.writeHttpResponse(HttpStatus.OK, "Deck configurated");
                 } catch (SQLException | IOException e) {
                     e.printStackTrace();
-                    try {
-                        respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "ERR");
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
                 }
             }
         } else {
@@ -87,12 +81,10 @@ public class DeckHandler {
                 e.printStackTrace();
             }
         }
-
     }
-
-    public void addCardtoDeck(String id, String user) throws SQLException {
-        PreparedStatement statement = null;
-        statement = Connection.getConnection().prepareStatement("""
+    //Update deck of user
+    public void addCardtoDeck(String id, String user) throws SQLException, IOException {
+        PreparedStatement statement = Connection.getConnection().prepareStatement("""
                    UPDATE cards
                     SET "inDeck"=true
                     WHERE id=?
@@ -100,9 +92,14 @@ public class DeckHandler {
                 """);
         statement.setString(1, id);
         statement.setString(2, user);
-        statement.execute();
+        int updatedRows = statement.executeUpdate();
+        if (updatedRows > 0) {
+                respond.writeHttpResponse(HttpStatus.OK, "Deck configurated");
+        } else {
+                respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "ERR");
+
+        }
         statement.close();
     }
-
 }
 
