@@ -4,16 +4,16 @@ import cards.Card;
 import cards.Elements;
 import cards.Monstercard;
 import cards.Spellcard;
-import db.DBconnection;
+import db.getDBConnection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PrepareCards {
-    private final DBconnection Connection;
+public class PrepareCards implements getDBConnection,PrepareCardsInterface {
+
 
     public PrepareCards() {
-        Connection=DBconnection.getInstance();
     }
 
     public Card chooseCard(String user){
@@ -42,6 +42,7 @@ public class PrepareCards {
                     return new Monstercard(id,name,Elements.values()[element],dmg);
                 }
             }
+            rs.close();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();

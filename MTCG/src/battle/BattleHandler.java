@@ -1,26 +1,18 @@
 package battle;
 
-import cards.Elements;
-import cards.Monstercard;
-import cards.Spellcard;
-import db.DBconnection;
-import server.HttpStatus;
-import server.Responsebuilder;
+import Http.HttpStatus;
+import db.getDBConnection;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BattleHandler {
-
-    private final DBconnection Connection;
-    private Battle Battle=new Battle();
-    private Responsebuilder respond = Responsebuilder.getInstance();
+public class BattleHandler implements BattleHandlerInteface, getDBConnection {
 
     public BattleHandler() {
-        Connection=DBconnection.getInstance();
     }
+
     public void checkforOpponent(String user){
         PreparedStatement statement = null;
         try {
@@ -34,16 +26,24 @@ public class BattleHandler {
             ResultSet rs=statement.executeQuery();
             String opponent;
             if(rs.next()){
+                System.out.println("yes");
                 respond.writeHttpResponse(HttpStatus.OK,"found battle");
                 opponent=rs.getString("username");
                 inBattle(user);
                 inBattle(opponent);
-                Battle.battle(user,opponent);
+                battle.battle(user,opponent);
             }else{
+                System.out.println("no");
                 setrdy(user);
             }
+            rs.close();
             statement.close();
         } catch (SQLException | IOException e) {
+            try {
+                respond.writeHttpResponse(HttpStatus.BAD_REQUEST,"");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
     }
@@ -94,6 +94,17 @@ public class BattleHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void listenforbattle(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(){
+
+                }
+            }
+        }).start();
     }
 
 }
