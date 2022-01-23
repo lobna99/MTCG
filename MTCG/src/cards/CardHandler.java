@@ -1,4 +1,5 @@
 package cards;
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
 import packages.Package;
@@ -57,7 +58,7 @@ public class CardHandler implements getDBConnection,CardHandlerInterface {
         }
     }
     public void InsertCard(Card newCard,int id) throws SQLException {
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                          INSERT INTO cards
                          (id,name,damage,element,packageid)
                          VALUES (?,?,?,?,?);   
@@ -76,7 +77,7 @@ public class CardHandler implements getDBConnection,CardHandlerInterface {
         if(user!=null) {
             PreparedStatement statement = null;
             try {
-                statement = Connection.getConnection().prepareStatement("""
+                statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                              SELECT *
                              from cards
                              WHERE "user"=?
@@ -97,6 +98,8 @@ public class CardHandler implements getDBConnection,CardHandlerInterface {
                 }
                 rs.close();
                 statement.close();
+
+                DBconnectionImpl.getInstance().getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

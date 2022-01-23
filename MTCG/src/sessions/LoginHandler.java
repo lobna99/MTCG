@@ -1,6 +1,7 @@
 package sessions;
 
 
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
 import Http.HttpStatus;
@@ -34,7 +35,7 @@ public class LoginHandler implements getDBConnection, Response,LoginHandlerInter
     }
     public boolean logged(User user) throws SQLException {
         //------------CHECK IF USER EXISTS
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                          SELECT * 
                          from users 
                          WHERE username=? 
@@ -46,11 +47,14 @@ public class LoginHandler implements getDBConnection, Response,LoginHandlerInter
         if(result.next()){
             result.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
             return true;
 
         }else {
             result.close();
             statement.close();
+
+            DBconnectionImpl.getInstance().getConnection().close();
             return false;
         }
     }

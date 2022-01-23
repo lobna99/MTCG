@@ -2,6 +2,7 @@ package transactions;
 
 
 import Http.HttpStatus;
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import response.Response;
 import java.io.IOException;
@@ -15,9 +16,9 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
     }
     public boolean buyPack(String user) throws SQLException {//purchase Package
         //-------- SELECT RANDOM PACKAGE AND GET ID
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                          SELECT id
-                         from packages 
+                         from packages
                          ORDER BY
                           	id
                           LIMIT 1;
@@ -33,7 +34,7 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
         }
         assignCards(packageid,user);
         //---------- USER PAYED 5 COINS FOR PACKAGE
-        PreparedStatement pay = Connection.getConnection().prepareStatement("""
+        PreparedStatement pay = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                          UPDATE users
                          SET   coins=coins-5
                          WHERE username=?
@@ -43,11 +44,12 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
         removePack(packageid);
         pay.close();
         statement.close();
+        DBconnectionImpl.getInstance().getConnection().close();
         return true;
     }
     public void assignCards(int id,String user) throws SQLException {
         //---------------ASSIGN CARDS TO A PACKAGE
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         UPDATE cards
                          SET "user"=?
                          WHERE packageid=?
@@ -56,12 +58,13 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
         statement.setInt(2,id);
         statement.execute();
         statement.close();
+        DBconnectionImpl.getInstance().getConnection().close();
     }
     public boolean checkifbroke(String user) throws SQLException {
         //-----------CHECK IF USER GOT ENOUGH MONEY
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                          SELECT coins
-                         from users 
+                         from users
                          WHERE username=?;
                      """);
         statement.setString(1,user);
@@ -69,9 +72,11 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
         rs.next();
         if(rs.getInt(1) < 5){
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
             return true;
         }else {
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
             return false;
         }
     }
@@ -93,14 +98,15 @@ public class PurchaseHandler implements getDBConnection,PurchaseHandlerInterface
     public void removePack(int id){
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
-                         DELETE 
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
+                         DELETE
                          FROM packages
                          WHERE id=?;
                          """);
             statement.setInt(1,id);
             statement.execute();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

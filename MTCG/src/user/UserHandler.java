@@ -1,5 +1,6 @@
 package user;
 
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
 import Http.HttpStatus;
@@ -28,7 +29,7 @@ public class UserHandler implements Response, getDBConnection {
 
     }
     public void insertUser(User newUser) throws SQLException{
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                              INSERT INTO users
                              (username,password,ELO,coins)
                              VALUES (?,?,?,?);   
@@ -39,11 +40,12 @@ public class UserHandler implements Response, getDBConnection {
         statement.setInt(4, newUser.getCoins());
         statement.execute();
         statement.close();
+        DBconnectionImpl.getInstance().getConnection().close();
     }
     public void getUserData(String user){
             PreparedStatement statement = null;
             try {
-                statement = Connection.getConnection().prepareStatement("""
+                statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                              SELECT *
                              from users
                              WHERE username=?
@@ -66,6 +68,7 @@ public class UserHandler implements Response, getDBConnection {
                 }
                 rs.close();
                 statement.close();
+                DBconnectionImpl.getInstance().getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -74,7 +77,7 @@ public class UserHandler implements Response, getDBConnection {
     public void updateUser(String user,JsonNode node){
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                                 UPDATE users
                                  SET bio=?,name=?,image=?
                                  WHERE username=?;
@@ -85,6 +88,7 @@ public class UserHandler implements Response, getDBConnection {
             statement.setString(4,user);
             statement.execute();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
             respond.writeHttpResponse(HttpStatus.OK,"user updated");
         } catch (SQLException | IOException e) {
             e.printStackTrace();

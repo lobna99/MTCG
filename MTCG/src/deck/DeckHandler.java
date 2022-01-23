@@ -1,5 +1,6 @@
 package deck;
 
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
 import Http.HttpStatus;
@@ -20,7 +21,7 @@ public class DeckHandler implements getDBConnection, Response,DeckHandlerInterfa
     public void getDeck(String user, String getParam) {
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         SELECT *
                         FROM cards
                         WHERE "user"=?
@@ -49,6 +50,7 @@ public class DeckHandler implements getDBConnection, Response,DeckHandlerInterfa
             }
             rs.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
             if (rows == 0) {
                 respond.writeHttpResponse(HttpStatus.OK, "No Deck is set for this user");
             }
@@ -60,7 +62,6 @@ public class DeckHandler implements getDBConnection, Response,DeckHandlerInterfa
 
     //call all relevant functions tp configureDeck
     public void configureDeck(JsonNode node, String user) {
-        Responsebuilder respond = Responsebuilder.getInstance();
         if (node.size() > 3) {
             for (int i = 0; i < 4; i++) {
                 try {
@@ -78,13 +79,12 @@ public class DeckHandler implements getDBConnection, Response,DeckHandlerInterfa
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                e.printStackTrace();
             }
         }
     }
     //Update deck of user
     public void addCardtoDeck(String id, String user) throws SQLException, IOException {
-        PreparedStatement statement = Connection.getConnection().prepareStatement("""
+        PreparedStatement statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                    UPDATE cards
                     SET "inDeck"=true
                     WHERE id=?
@@ -100,6 +100,7 @@ public class DeckHandler implements getDBConnection, Response,DeckHandlerInterfa
 
         }
         statement.close();
+        DBconnectionImpl.getInstance().getConnection().close();
     }
 }
 

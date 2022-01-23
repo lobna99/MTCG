@@ -1,5 +1,6 @@
 package scoreboard;
 import Http.HttpStatus;
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import response.Response;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class ScoreHandler implements getDBConnection, Response,ScoreHandlerInter
     public void showScoreboard(){
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         SELECT elo,username
                         from users
                         ORDER BY elo
@@ -24,7 +25,7 @@ public class ScoreHandler implements getDBConnection, Response,ScoreHandlerInter
             while (rs.next()) {
                 int elo = rs.getInt("elo");
                 String username = rs.getString("username");
-                String response = "{\"Username\":\""+username+"\",\"ELO\":\"" + elo + "\"}";
+                String response = "{\"Username\":\""+username+"\",\" ELO\":\"" + elo + "\"}";
                 try {
                     respond.writeHttpResponse(HttpStatus.OK, response);
                 } catch (IOException e) {
@@ -33,6 +34,7 @@ public class ScoreHandler implements getDBConnection, Response,ScoreHandlerInter
             }
             rs.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
