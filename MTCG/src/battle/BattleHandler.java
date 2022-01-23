@@ -1,8 +1,7 @@
 package battle;
-
 import Http.HttpStatus;
+import db.DBconnectionImpl;
 import db.getDBConnection;
-
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,28 +15,28 @@ public class BattleHandler implements BattleHandlerInteface, getDBConnection {
     public void checkforOpponent(String user){
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         SELECT bio,username
                         from users
-                        WHERE bio=?
+                        WHERE bio=? AND username!=?
                         LIMIT 1;
                     """);
             statement.setString(1,"ready for Battle");
+            statement.setString(2,user);
             ResultSet rs=statement.executeQuery();
             String opponent;
             if(rs.next()){
-                System.out.println("yes");
                 respond.writeHttpResponse(HttpStatus.OK,"found battle");
                 opponent=rs.getString("username");
                 inBattle(user);
                 inBattle(opponent);
                 battle.battle(user,opponent);
             }else{
-                System.out.println("no");
-                setrdy(user);
+                respond.writeHttpResponse(HttpStatus.OK,"No battle found\n waiting for battle....");
             }
             rs.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException | IOException e) {
             try {
                 respond.writeHttpResponse(HttpStatus.BAD_REQUEST,"");
@@ -50,23 +49,23 @@ public class BattleHandler implements BattleHandlerInteface, getDBConnection {
     public void setrdy(String user){
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     UPDATE users
-                        SET bio=?
-                        WHERE username=?
+                    SET bio=?
+                    WHERE username=?
                     """);
             statement.setString(1,"ready for Battle");
             statement.setString(2,user);
             statement.execute();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
     public void inBattle(String user){
         try {
-            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
+            PreparedStatement inBattle = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     UPDATE users
                         SET bio=?
                         WHERE username=?
@@ -75,15 +74,15 @@ public class BattleHandler implements BattleHandlerInteface, getDBConnection {
             inBattle.setString(2,user);
             inBattle.execute();
             inBattle.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
     public void resetBio(String user){
         try {
-            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
-                    UPDATE users
+            PreparedStatement inBattle = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
+                        UPDATE users
                         SET bio=?
                         WHERE username=?
                     """);
@@ -91,20 +90,10 @@ public class BattleHandler implements BattleHandlerInteface, getDBConnection {
             inBattle.setString(2,user);
             inBattle.execute();
             inBattle.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void listenforbattle(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(){
-
-                }
-            }
-        }).start();
     }
 
 }

@@ -4,30 +4,31 @@ import cards.Card;
 import cards.Elements;
 import cards.Monstercard;
 import cards.Spellcard;
+import db.DBconnectionImpl;
 import db.getDBConnection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PrepareCards implements getDBConnection,PrepareCardsInterface {
+
 
 
     public PrepareCards() {
     }
 
-    public Card chooseCard(String user){
-        //--------------CHOOSE A RANDOM CARD FOR FIGHT FROM USERR--------------
+    public ArrayList<Card> chooseCard(String user){
+        //--------------CHOOSE A RANDOM CARD FOR FIGHT FROM USERR-------------
+        ArrayList<Card> CardsofUser=new ArrayList<>();
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         SELECT *
                         from cards
                         WHERE "user"=?
-                        AND "inDeck"=true
-                        ORDER BY
-                             random()
-                         LIMIT 1;
+                        and "inDeck"=true;
                     """);
             statement.setString(1,user);
             ResultSet rs=statement.executeQuery();
@@ -37,34 +38,17 @@ public class PrepareCards implements getDBConnection,PrepareCardsInterface {
                 double dmg = rs.getDouble("damage");
                 int element = rs.getInt("element");
                 if (name.contains("Spell")){
-                    return new Spellcard(id,name, Elements.values()[element],dmg);
+                    CardsofUser.add(new Spellcard(id,name, Elements.values()[element],dmg));
                 }else{
-                    return new Monstercard(id,name,Elements.values()[element],dmg);
+                    CardsofUser.add(new Monstercard(id,name,Elements.values()[element],dmg));
                 }
             }
             rs.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return CardsofUser;
     }
-    public void removeCard(Card card,String opponent){
-        try {
-            PreparedStatement update=Connection.getConnection().prepareStatement("""
-                        UPDATE cards
-                        SET "user"=?
-                        WHERE id=?
-                        ;
-                    """);
-           update.setString(1,opponent);
-           update.setString(2,card.getId());
-           update.execute();
-           update.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

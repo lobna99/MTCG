@@ -2,7 +2,8 @@ package battle;
 
 import cards.Card;
 
+import java.util.ArrayList;
+
 public interface PrepareCardsInterface {
-    public Card chooseCard(String user);
-    public void removeCard(Card card,String opponent);
+    public ArrayList<Card> chooseCard(String user);
 }

@@ -7,10 +7,10 @@ import response.Responsebuilder;
 import stats.StatsHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Battle implements BattleInterface, Response {
-    private int Rounds;
-    private static Battle OBJ =null;
+    private static Battle OBJ = null;
 
 
     public static Battle getInstance() {
@@ -19,8 +19,8 @@ public class Battle implements BattleInterface, Response {
 
         return OBJ;
     }
+
     private Battle() {
-        Rounds = 100;
     }
 
     public String calculateDMG(Card first, Card second) {
@@ -72,40 +72,58 @@ public class Battle implements BattleInterface, Response {
     }
 
     public void battle(String user, String opponent) {
-        PrepareCards handleCard = new PrepareCards();
-        BattleHandler battleHandler = new BattleHandler();
-        StatsHandler statsHandler = new StatsHandler();
-        while (Rounds > 0) {
-            battleLogger.log("Round: "+ Rounds +"\n");
-            Card cardA = handleCard.chooseCard(user);
-            Card cardB = handleCard.chooseCard(opponent);
-            if (cardA == null || cardB == null) {
-                break;
-            }
-            battleLogger.log(user+" picked"+cardA.getName()+"\n");
-            battleLogger.log(opponent+" picked"+cardB.getName()+"\n");
+        ArrayList<Card> userCards = handleCard.chooseCard(user);
+        ArrayList<Card> oppCards = handleCard.chooseCard(opponent);
+        int userwon = 0;
+        int userlost = 0;
+        int oppwon = 0;
+        int opplost = 0;
+        int elo1=statsHandler.getELO(user);
+        int elo2=statsHandler.getELO(opponent);
+        int rounds;
+        for (rounds = 100; rounds > 0; rounds--) {
+            battleLogger.log("Round: " + rounds + "\n");
+            Card cardA = userCards.get((int) (Math.random() * userCards.size()));
+            Card cardB = oppCards.get((int) (Math.random() * oppCards.size()));
+            battleLogger.log(user + " picked : " + cardA.getName() + "\n");
+            battleLogger.log(opponent + " picked : " + cardB.getName() + "\n");
             checkSpeciality(cardA, cardB);
             checkSpeciality(cardB, cardA);
             switch (calculateDMG(cardA, cardB)) {
                 case "Won" -> {
-                    handleCard.removeCard(cardB, user);
-                    statsHandler.win(user);
-                    statsHandler.lose(opponent);
+                    userCards.add(cardB);
+                    oppCards.remove(cardB);
+                    elo1=statsHandler.calculateElo(elo1,elo2,1);
+                    elo2=statsHandler.calculateElo(elo2,elo1,0);
+                    userwon++;
+                    opplost++;
                     battleLogger.log(user + " won this round\n");
                     battleLogger.log(opponent + " lost this round\n");
                 }
                 case "Lost" -> {
-                    handleCard.removeCard(cardA, opponent);
-                    statsHandler.win(opponent);
-                    statsHandler.lose(user);
+                    oppCards.add(cardA);
+                    userCards.remove(cardA);
+                    elo1=statsHandler.calculateElo(elo1,elo2,0);
+                    elo2=statsHandler.calculateElo(elo2,elo1,1);
+                    oppwon++;
+                    userlost++;
                     battleLogger.log(opponent + " won this round\n");
                     battleLogger.log(user + " lost this round\n");
                 }
-                case "Draw" -> battleLogger.log("draw\n");
+                case "Draw" -> {
+                    battleLogger.log("draw\n");
+                    elo1=statsHandler.calculateElo(elo1,elo2,0.5);
+                    elo2=statsHandler.calculateElo(elo2,elo1,0.5);
+
+                }
             }
-            --Rounds;
+            if (oppCards.size() ==0 || userCards.size() == 0) {
+                break;
+            }
         }
         battleLogger.log("End of battle\n");
+        statsHandler.updateStats(user, userlost,userwon,elo1);
+        statsHandler.updateStats(opponent, opplost,oppwon,elo2);
         battleHandler.resetBio(user);
         battleHandler.resetBio(opponent);
         try {
