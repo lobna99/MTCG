@@ -1,6 +1,7 @@
 package stats;
 
 import Http.HttpStatus;
+import db.DBconnectionImpl;
 import db.getDBConnection;
 import response.Response;
 
@@ -16,7 +17,7 @@ public class StatsHandler implements Response, getDBConnection,StatsHandlerInter
     public void getScore(String user) {
         PreparedStatement statement = null;
         try {
-            statement = Connection.getConnection().prepareStatement("""
+            statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                         SELECT elo,won,lost
                         from users
                         WHERE username=?
@@ -36,35 +37,55 @@ public class StatsHandler implements Response, getDBConnection,StatsHandlerInter
             }
             rs.close();
             statement.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void win(String user){
+    public int getELO(String user){
         try {
-            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
-                    UPDATE users
-                        SET won=won+1,elo=elo+3
+            PreparedStatement inBattle = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
+                        SELECT elo FROM users
                         WHERE username=?
                     """);
             inBattle.setString(1,user);
-            inBattle.execute();
+            ResultSet elos=inBattle.executeQuery();
+            if(elos.next()){
+                return elos.getInt(1);
+            }
+            elos.close();
             inBattle.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
-    public void lose(String user){
+    public int calculateElo(int elo1, int elo2, double r){
+        int k=40;
+        int Ea;
+        if(elo1>=2400&&elo2>=2400){
+            k=10;
+        }
+        Ea=1/(1+k^((elo2-elo1)/400));
+
+        return (int) (elo1+k*(r-Ea));
+    }
+    public void updateStats(String user,int lost,int won, int elo){
         try {
-            PreparedStatement inBattle = Connection.getConnection().prepareStatement("""
+            PreparedStatement inBattle = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     UPDATE users
-                        SET lost=lost+1,elo=elo-5
+                        SET lost=?,won=?,elo=?
                         WHERE username=?
                     """);
-            inBattle.setString(1,user);
+            inBattle.setInt(1,lost);
+            inBattle.setInt(2,won);
+            inBattle.setInt(3,elo);
+            inBattle.setString(4,user);
             inBattle.execute();
             inBattle.close();
+            DBconnectionImpl.getInstance().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
