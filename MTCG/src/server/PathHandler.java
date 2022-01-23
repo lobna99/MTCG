@@ -26,5 +26,5 @@ public interface PathHandler {
     final PurchaseRequest purchaseRequest=new PurchaseRequest();
     final UserRequest userRequest=new UserRequest();
     final ParseJsonInterface Json=new ParseJson();
-    public void handlePath(HTTPRequest request) throws IOException;
+    public void handlePath(HTTPRequest request) throws IOException, InterruptedException;
 }

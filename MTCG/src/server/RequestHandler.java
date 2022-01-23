@@ -7,6 +7,6 @@ import java.io.IOException;
 
 public interface RequestHandler {
     Responsebuilder responsebuilder = Responsebuilder.getInstance();
-    public void handlerequests() throws IOException;
+    public void handlerequests() throws IOException, InterruptedException;
     public void closeEverything();
 }

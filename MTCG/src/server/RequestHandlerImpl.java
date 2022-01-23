@@ -24,14 +24,14 @@ public class RequestHandlerImpl implements Runnable, RequestHandler {
             responsebuilder.setOutput(output);
             currentRequest.getHttpsContent(in);
             handlerequests();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println(Thread.currentThread().getName() + " Error: " + e.getMessage());
         } finally {
            closeEverything();
         }
     }
 
-    public void handlerequests() throws IOException {
+    public void handlerequests() throws IOException, InterruptedException {
         PathHandlerImpl pathHandler=new PathHandlerImpl();
         pathHandler.handlePath(currentRequest);
     }
