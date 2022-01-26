@@ -38,3 +38,7 @@ Username registrieren kann oder einloggen kann wenn es den User noch nicht in de
 Das Projekt hab ich ganz am Anfang gestartet und Stück für Stück daran weitergearbeitet. Allerdings habe ich 80% des Projekts Anfang Jänner gemacht, da ich ganz ehrlich 
 meine Zeit nicht richtig gemanaget hab. Viel Zeit hab ich ans Recherieren investiert, weil ich noch nie einen Http Server davor gemacht habe und viele Funktionen und Libraries 
 in Java nicht kannte.
+
+
+## Link to Git
+https://github.com/lobna99/MTCG
