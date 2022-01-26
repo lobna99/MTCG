@@ -21,7 +21,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT elo,won,lost,ratio
-                    from users
+                    from "user"
                     WHERE username=?
                 """);
         statement.setString(1, user);
@@ -31,8 +31,8 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
             int elo = rs.getInt("elo");
             int wins = rs.getInt("won");
             int loses = rs.getInt("lost");
-            float ratio = rs.getFloat("ratio");
-            response += "{\"ELO\":\"" + elo + "\",\"Won\":\"" + wins + "\",\"Lost\":\"" + loses + "\",\"Ratio\":\"" + ratio + "\"}\n";
+            double ratio = rs.getDouble("ratio");
+            response += "{\"ELO\":\"" + elo + "\",\"Won\":\"" + wins + "\",\"Lost\":\"" + loses + "\",\"Winratio\":\"" + ratio*100 + "% \"}\n";
         }
         rs.close();
         statement.close();
@@ -44,7 +44,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
     public int getELO(String user) throws SQLException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
-                    SELECT elo FROM users
+                    SELECT elo FROM "user"
                     WHERE username=?
                 """);
         inBattle.setString(1, user);
@@ -74,18 +74,18 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
         return (int) (elo1 + k * (r - Ea));
     }
 
-    public void updateStats(String user, int lost, int won, int elo, float ratio) throws SQLException {
+    public void updateStats(String user, int lost, int won, int elo, double ratio) throws SQLException {
         //update all stats
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
-                UPDATE users
+                UPDATE "user"
                     SET lost=?,won=?,elo=?,ratio=?
                     WHERE username=?
                 """);
         inBattle.setInt(1, lost);
         inBattle.setInt(2, won);
         inBattle.setInt(3, elo);
-        inBattle.setFloat(4, ratio);
+        inBattle.setDouble(4, ratio);
         inBattle.setString(5, user);
         inBattle.execute();
         inBattle.close();

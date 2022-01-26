@@ -23,7 +23,7 @@ public class DeckHandlerImpl implements getDBConnection, Response, DeckHandler {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT *
-                    FROM cards
+                    FROM card
                     WHERE "user"=?
                     AND "inDeck"=true;
                 """);
@@ -70,7 +70,7 @@ public class DeckHandlerImpl implements getDBConnection, Response, DeckHandler {
     public boolean addCardtoDeck(String id, String user) throws SQLException, IOException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
-                   UPDATE cards
+                   UPDATE card
                     SET "inDeck"=true
                     WHERE id=?
                     AND  "user"=?;

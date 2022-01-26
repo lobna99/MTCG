@@ -24,7 +24,7 @@ public class PrepareCardsImpl implements getDBConnection, PrepareCards {
         PreparedStatement statement = null;
         statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     SELECT *
-                    from cards
+                    from card
                     WHERE "user"=?
                     and "inDeck"=true;
                 """);

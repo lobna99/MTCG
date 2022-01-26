@@ -32,7 +32,7 @@ public class LoginHandlerImpl implements getDBConnection, LoginHandler {
         java.sql.Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
                     SELECT *
-                    from users
+                    from "user"
                     WHERE username=?
                     and password=?
                 """);
@@ -58,7 +58,7 @@ public class LoginHandlerImpl implements getDBConnection, LoginHandler {
         java.sql.Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
                     SELECT *
-                    from users
+                    from "user"
                     WHERE username=?
                 """);
         statement.setString(1, user);

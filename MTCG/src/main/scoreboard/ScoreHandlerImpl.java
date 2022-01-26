@@ -21,7 +21,7 @@ public class ScoreHandlerImpl implements getDBConnection, ScoreHandler {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT elo,username,won,lost,ratio
-                    from users
+                    from "user"
                     ORDER BY elo
                     DESC ;
                 """);
@@ -33,7 +33,7 @@ public class ScoreHandlerImpl implements getDBConnection, ScoreHandler {
             int loses = rs.getInt("lost");
             float ratio = rs.getFloat("ratio");
             String username = rs.getString("username");
-            response += "{\"Username\":\"" + username + "\",\" ELO\":\"" + elo + "\",\"Won\":\"" + wins + "\",\"Lost\":\"" + loses + "\",\"Ratio\":\"" + ratio + "\"}\n";
+            response += "{\"Username\":\"" + username + "\",\" ELO\":\"" + elo + "\",\"Won\":\"" + wins + "\",\"Lost\":\"" + loses + "\",\"Winratio\":\"" + ratio + "\"}\n";
         }
         rs.close();
         statement.close();

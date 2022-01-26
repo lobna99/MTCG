@@ -20,7 +20,7 @@ public class PackageHandlerImpl implements getDBConnection, Response, PackageHan
     public boolean InsertPackage(Package newPackage) throws SQLException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
-                    INSERT INTO packages
+                    INSERT INTO package
                     (cost)
                     VALUES (?)
                     RETURNING id;

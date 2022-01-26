@@ -20,7 +20,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT bio,username
-                    from users
+                    from "user"
                     WHERE bio=? AND username!=?
                     LIMIT 1;
                 """);
@@ -49,7 +49,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
-                UPDATE users
+                UPDATE "user"
                 SET bio=?
                 WHERE username=?
                 """);
@@ -64,7 +64,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
     public void inBattle(String user) throws SQLException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
-                UPDATE users
+                UPDATE "user"
                     SET bio=?
                     WHERE username=?
                 """);
@@ -78,7 +78,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
     public void resetBio(String user) throws SQLException {//reset bio after battle
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
-                    UPDATE users
+                    UPDATE "user"
                     SET bio=?
                     WHERE username=?
                 """);

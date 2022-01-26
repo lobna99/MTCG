@@ -8,7 +8,7 @@ public interface StatsHandler {
 
     public int calculateElo(int elo1, int elo2, double r);
 
-    public void updateStats(String user, int lost, int won, int elo, float ratio) throws SQLException;
+    public void updateStats(String user, int lost, int won, int elo, double ratio) throws SQLException;
 
     public String getScore(String user) throws SQLException, IOException;
 }

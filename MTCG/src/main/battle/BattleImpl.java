@@ -96,13 +96,19 @@ public class BattleImpl implements Battle, Response {
                     Player2.setELO(statsHandler.calculateElo(Player2.getELO(), Player1.getELO(), 0.5));
                 }
             }
-            if (Player1.getCards().isEmpty() || Player2.getCards().isEmpty()) {
+            if (Player1.getCards().isEmpty()){
+                battleLogger.log(Player1.getUsername()+" has no Cards left\n");
+                break;
+            }else if(Player2.getCards().isEmpty()) {
+                battleLogger.log(Player2.getUsername()+" has no Cards left\n");
                 break;
             }
         }
         battleLogger.log("End of battle\n");
-        statsHandler.updateStats(Player1.getUsername(), Player1.getLost(), Player1.getWon(), Player1.getELO(), Player1.getWon() / Player1.getLost());
-        statsHandler.updateStats(Player2.getUsername(), Player2.getLost(), Player2.getWon(), Player2.getELO(), Player2.getWon() / Player2.getLost());
+        double ratio1=Player1.getWon()/(double)(Player1.getWon()+Player1.getLost());
+        double ratio2=Player2.getWon()/(double)(Player2.getWon()+Player2.getLost());
+        statsHandler.updateStats(Player1.getUsername(), Player1.getLost(), Player1.getWon(), Player1.getELO(), ratio1);
+        statsHandler.updateStats(Player2.getUsername(), Player2.getLost(), Player2.getWon(), Player2.getELO(), ratio2);
         battleHandler.resetBio(Player1.getUsername());
         battleHandler.resetBio(Player2.getUsername());
         return battleLogger.getLog();

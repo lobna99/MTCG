@@ -70,7 +70,7 @@ public class CardHandlerImpl implements getDBConnection, CardHandler {
     public void InsertCard(Card newCard, int id) throws SQLException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
-                    INSERT INTO cards
+                    INSERT INTO card
                     (id,name,damage,element,packageid)
                     VALUES (?,?,?,?,?);   
                 """);
@@ -90,7 +90,7 @@ public class CardHandlerImpl implements getDBConnection, CardHandler {
             Connection con = DBconnectionImpl.getInstance().getConnection();
             statement = con.prepareStatement("""
                         SELECT *
-                        from cards
+                        from card
                         WHERE "user"=?
                     """);
             statement.setString(1, user);

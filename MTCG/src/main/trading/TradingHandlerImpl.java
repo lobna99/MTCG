@@ -22,7 +22,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         PreparedStatement statement = null;
         statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     SELECT *
-                    from trades
+                    from trade
                 """);
         ResultSet rs = statement.executeQuery();
         int cnt = 0;
@@ -50,7 +50,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         if (!checkifInDeck(node, user)) {
             Connection con = DBconnectionImpl.getInstance().getConnection();
             PreparedStatement statement = con.prepareStatement("""
-                        INSERT INTO trades
+                        INSERT INTO trade
                         (id,"Card","typeOfCard","minDamage",owner)
                         VALUES (?,?,?,?,?);   
                     """);
@@ -74,7 +74,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         //get the new card traded
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement trade = con.prepareStatement("""
-                    UPDATE cards
+                    UPDATE card
                     SET "user"=?
                     WHERE id=?
                 """);
@@ -92,7 +92,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement trade = con.prepareStatement("""
                     DELETE
-                    from trades
+                    from trade
                     WHERE id=?
                     and owner=?
                 """);
@@ -111,7 +111,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT owner
-                    from trades
+                    from trade
                     WHERE id=?
                     and owner!=?;
                 """);
@@ -153,7 +153,7 @@ public class TradingHandlerImpl implements TradingHandler,Response {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT "inDeck"
-                    from cards
+                    from card
                     WHERE "user"=?
                     and id=?;
                 """);

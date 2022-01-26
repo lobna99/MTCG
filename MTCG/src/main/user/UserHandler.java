@@ -30,7 +30,7 @@ public class UserHandler implements getDBConnection {
         //insert new User
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
-                    INSERT INTO users
+                    INSERT INTO "user"
                     (username,password,ELO,coins)
                     VALUES (?,?,?,?);   
                 """);
@@ -49,7 +49,7 @@ public class UserHandler implements getDBConnection {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                     SELECT *
-                    from users
+                    from "user"
                     WHERE username=?
                 """);
         statement.setString(1, user);
@@ -75,7 +75,7 @@ public class UserHandler implements getDBConnection {
         PreparedStatement statement = null;
         java.sql.Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
-                   UPDATE users
+                   UPDATE "user"
                     SET bio=?,name=?,image=?
                     WHERE username=?;
                 """);

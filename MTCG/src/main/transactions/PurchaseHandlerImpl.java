@@ -22,7 +22,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
         //-------- SELECT PACKAGE AND GET ID
         PreparedStatement statement = con.prepareStatement("""
                     SELECT id
-                    from packages
+                    from package
                     ORDER BY
                      	id
                      LIMIT 1;
@@ -48,7 +48,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
         //---------------ASSIGN CARDS TO A PACKAGE
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
-                   UPDATE cards
+                   UPDATE card
                     SET "user"=?
                     WHERE packageid=?
                 """);
@@ -64,7 +64,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
                     SELECT coins
-                    from users
+                    from "user"
                     WHERE username=?;
                 """);
         statement.setString(1, user);
@@ -98,7 +98,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
                 DELETE
-                FROM packages
+                FROM package
                 WHERE id=?;
                 """);
         statement.setInt(1, id);
@@ -111,8 +111,8 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
         //---------- USER PAYED 5 COINS FOR PACKAGE
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement pay = con.prepareStatement("""
-                    UPDATE users
-                    SET   coins=coins-(Select cost from packages where id=?)
+                    UPDATE "user"
+                    SET   coins=coins-(Select cost from package where id=?)
                     WHERE username=?
                 """);
         pay.setInt(1, packageid);
