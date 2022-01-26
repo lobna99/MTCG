@@ -3,8 +3,6 @@ package user;
 import db.DBconnectionImpl;
 import db.getDBConnection;
 import org.codehaus.jackson.JsonNode;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +27,7 @@ public class UserHandler implements getDBConnection {
     }
 
     public void insertUser(User newUser) throws SQLException {
+        //insert new User
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
                     INSERT INTO users
@@ -44,7 +43,8 @@ public class UserHandler implements getDBConnection {
         con.close();
     }
 
-    public String getUserData(String user) throws SQLException, IOException {
+    public String getUserData(String user) throws SQLException {
+        //Get all user data of current user return as JSON
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
@@ -71,6 +71,7 @@ public class UserHandler implements getDBConnection {
     }
 
     public boolean updateUser(String user, JsonNode node) throws SQLException {
+        //update Users profile
         PreparedStatement statement = null;
         java.sql.Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""

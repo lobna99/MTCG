@@ -11,13 +11,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TradingHandlerImpl implements TradingHandler, Response {
+public class TradingHandlerImpl implements TradingHandler,Response {
 
     public TradingHandlerImpl() {
     }
 
     @Override
-    public String getTrades() throws SQLException, IOException {
+    public String getTrades() throws SQLException {
+        //Get all current Trades
         PreparedStatement statement = null;
         statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""
                     SELECT *
@@ -44,7 +45,8 @@ public class TradingHandlerImpl implements TradingHandler, Response {
     }
 
     @Override
-    public boolean postTrade(JsonNode node, String user) throws SQLException, IOException {
+    public boolean postTrade(JsonNode node, String user) throws SQLException{
+        //post Trade of user
         if (!checkifInDeck(node, user)) {
             Connection con = DBconnectionImpl.getInstance().getConnection();
             PreparedStatement statement = con.prepareStatement("""
@@ -69,6 +71,7 @@ public class TradingHandlerImpl implements TradingHandler, Response {
 
     @Override
     public boolean tradeCard(String Card, String user) throws SQLException {
+        //get the new card traded
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement trade = con.prepareStatement("""
                     UPDATE cards
@@ -84,7 +87,8 @@ public class TradingHandlerImpl implements TradingHandler, Response {
     }
 
     @Override
-    public void deleteTrade(String user, String card) throws SQLException, IOException {
+    public void deleteTrade(String user, String card) throws SQLException{
+        //delete Trade of user
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement trade = con.prepareStatement("""
                     DELETE
@@ -100,7 +104,8 @@ public class TradingHandlerImpl implements TradingHandler, Response {
     }
 
     @Override
-    public String getOwner(String card, String user) throws SQLException, IOException {
+    public String getOwner(String card, String user) throws SQLException {
+        //Get the current owner of card thats traded
         PreparedStatement statement = null;
         String owner;
         Connection con = DBconnectionImpl.getInstance().getConnection();
@@ -129,6 +134,7 @@ public class TradingHandlerImpl implements TradingHandler, Response {
 
     @Override
     public boolean trade(String card, JsonNode node, String user) throws SQLException, IOException {
+        //do the trading
         String owner = getOwner(card, user);
         if (owner != null) {
             tradeCard(node.getValueAsText(), owner);
@@ -142,6 +148,7 @@ public class TradingHandlerImpl implements TradingHandler, Response {
 
     @Override
     public boolean checkifInDeck(JsonNode node, String user) throws SQLException {
+        //check if the card is already in deck of user
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""

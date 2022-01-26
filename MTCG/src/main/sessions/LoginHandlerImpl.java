@@ -54,6 +54,7 @@ public class LoginHandlerImpl implements getDBConnection, LoginHandler {
     }
 
     public boolean authorization(String user) throws SQLException {
+        //check if username and token match
         java.sql.Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement statement = con.prepareStatement("""
                     SELECT *

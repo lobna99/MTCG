@@ -19,7 +19,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
 
     public boolean buyPack(String user) throws SQLException {//purchase Package
         Connection con = DBconnectionImpl.getInstance().getConnection();
-        //-------- SELECT RANDOM PACKAGE AND GET ID
+        //-------- SELECT PACKAGE AND GET ID
         PreparedStatement statement = con.prepareStatement("""
                     SELECT id
                     from packages
@@ -93,6 +93,7 @@ public class PurchaseHandlerImpl implements getDBConnection, PurchaseHandler {
     }
 
     public void removePack(int id) throws SQLException {
+        //Delete pack after its bought
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""

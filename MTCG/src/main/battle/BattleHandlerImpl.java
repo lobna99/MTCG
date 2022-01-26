@@ -14,6 +14,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
     public BattleHandlerImpl() {
     }
 
+    //----Check first for an Opponent to fight with
     public String checkforOpponent(String user) throws SQLException, IOException {
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
@@ -27,7 +28,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
         statement.setString(2, user);
         ResultSet rs = statement.executeQuery();
         String opponent;
-        if (rs.next()) {
+        if (rs.next()) {//if found start battle and set status to battle
             opponent = rs.getString("username");
             inBattle(user);
             inBattle(opponent);
@@ -35,7 +36,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
             statement.close();
             con.close();
             return "Battle Found\n\n" + battle.battle(user, opponent);
-        } else {
+        } else {//if not wait till battle is found
             rs.close();
             statement.close();
             con.close();
@@ -44,7 +45,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
 
     }
 
-    public boolean setrdy(String user) throws SQLException {
+    public boolean setrdy(String user) throws SQLException {//set status to ready for player
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
@@ -74,7 +75,7 @@ public class BattleHandlerImpl implements BattleHandler, getDBConnection {
         con.close();
     }
 
-    public void resetBio(String user) throws SQLException {
+    public void resetBio(String user) throws SQLException {//reset bio after battle
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
                     UPDATE users

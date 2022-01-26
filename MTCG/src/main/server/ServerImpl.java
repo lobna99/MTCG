@@ -21,20 +21,15 @@ public class ServerImpl implements Server {
         this.listen();
     }
 
-    public void listen() {
-        System.out.println("start server");
-        try {
+    public void listen() throws IOException {
+            System.out.println("start server");
             _listener = new ServerSocket(this.port, 5);
             System.out.println("http-server running at: http://localhost:" + this.port);
             while (true) {
-                Socket s = _listener.accept();
+                Socket s = _listener.accept();//listen for clients
                 RequestHandlerImpl requestHandler = new RequestHandlerImpl(s);
-                pool.execute(requestHandler);
+                pool.execute(requestHandler);//execute thread pool
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
-
 }
 

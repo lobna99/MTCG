@@ -14,7 +14,7 @@ public class DBconnectionImpl implements DBconnection {//Singelton Pattern only 
     private DBconnectionImpl() {
     }
 
-    public static DBconnectionImpl getInstance() {
+    public static DBconnectionImpl getInstance() {//always call this to user this Object
         if (OBJ == null)
             OBJ = new DBconnectionImpl();
 

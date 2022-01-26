@@ -41,15 +41,15 @@ public class HTTPRequestImpl implements HTTPRequest {
         while ((line = streamReader.readLine()) != null) {
             if (line.isBlank())
                 break;
-            if (count == 0) {
+            if (count == 0) {//First line of Header is always the Method and Path
                 method = line.split(" ", 3);
                 this.method = method[0];
                 this.path = method[1];
             }
-            if (line.toLowerCase().startsWith("authorization: ")) {
+            if (line.toLowerCase().startsWith("authorization: ")) {//get token when header as authorization:
                 this.token = line.split(" ", 3)[2].split("-", 2)[0];
             }
-            if (line.toLowerCase().startsWith("content-length:")) {
+            if (line.toLowerCase().startsWith("content-length:")) {//get the content length of body to read it
                 contentLength = Integer.parseInt(line.substring(15).trim());
             }
             ++count;

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-public class Responsebuilder implements ResponsebuilderInterface {
+public class Responsebuilder implements ResponsebuilderInterface {//Singleton Pattern
     private static Responsebuilder OBJ = null;
     private PrintWriter output;
 
@@ -20,7 +20,7 @@ public class Responsebuilder implements ResponsebuilderInterface {
     private Responsebuilder() {
     }
 
-    public void writeHttpResponse(HttpStatus httpStatus, String msg) throws IOException {
+    public void writeHttpResponse(HttpStatus httpStatus, String msg) throws IOException {//Writer for responses
         output.write(httpStatus.code + " " + httpStatus.message + "\r\n");
         output.write(msg + "\r\n");
         output.flush();

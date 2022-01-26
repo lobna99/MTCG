@@ -19,7 +19,7 @@ public class PrepareCardsImpl implements getDBConnection, PrepareCards {
     }
 
     public ArrayList<Card> chooseCard(String user) throws SQLException {
-        //--------------CHOOSE A RANDOM CARD FOR FIGHT FROM USERR-------------
+        //--------------CHOOSE DECK FOR FIGHT FROM USERR AND RETURN AS ARRAY-------------
         ArrayList<Card> CardsofUser = new ArrayList<>();
         PreparedStatement statement = null;
         statement = DBconnectionImpl.getInstance().getConnection().prepareStatement("""

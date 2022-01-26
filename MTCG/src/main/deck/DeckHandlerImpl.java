@@ -36,7 +36,7 @@ public class DeckHandlerImpl implements getDBConnection, Response, DeckHandler {
             String name = rs.getString("name");
             double dmg = rs.getDouble("damage");
             int element = rs.getInt("element");
-            if (getParam.contains("plain")) {
+            if (getParam.contains("plain")) {//plain returns a plain text else JSON
                 response += id + "," + name + "," + dmg + "," + element + "\n";
             } else {
                 response += "{\"Id\":\"" + id + "\",\"Name\":\"" + name + "\",\"Damage\":\"" + dmg + "\",\"Element\":\"" + element + "\"}\n";
@@ -46,20 +46,19 @@ public class DeckHandlerImpl implements getDBConnection, Response, DeckHandler {
         rs.close();
         statement.close();
         con.close();
-        if (rows == 0) {
+        if (rows == 0) {//if theres no resultSet theres no deck for user
             return "No Deck is set for this user";
         }
         return response;
     }
 
-    //call all relevant functions tp configureDeck
+    //call all relevant functions to configureDeck
     public boolean configureDeck(JsonNode node, String user) throws IOException, SQLException {
-        if (node.size() == 4) {
+        if (node.size() == 4) {//deck can only consist of 4 cards
             for (int i = 0; i < 4; i++) {
                 if (!addCardtoDeck(node.get(i).getValueAsText(), user)) {
                     return false;
                 }
-                ;
             }
             return true;
         } else {

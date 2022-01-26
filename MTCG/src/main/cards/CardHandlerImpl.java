@@ -18,22 +18,25 @@ public class CardHandlerImpl implements getDBConnection, CardHandler {
     public CardHandlerImpl() {
     }
 
+    //extract all cards that are given to as json
     public boolean extractnewcards(JsonNode node, Package pack) {
-        if (node.size() == 5) {
+        if (node.size() == 5) {//a pack consist of 5 cards
             for (int i = 0; i < 5; i++) {
-                if (node.get(i).get("Name").getValueAsText().contains("Spell")) {
-                    String[] sp = node.get(i).get("Name").getValueAsText().split("Spell", 0);
+                if (node.get(i).get("Name").getValueAsText().contains("Spell")) {//spell cards always have spell in name
+                    String[] sp = node.get(i).get("Name").getValueAsText().split("Spell", 0);//element name is before Spell in string eg "Firespell"
                     Elements elem = null;
-                    switch (sp[0]) {
+                    switch (sp[0]) {//set element for Card
                         case "Fire" -> elem = Elements.Fire;
                         case "Regular" -> elem = Elements.Regular;
                         case "Water" -> elem = Elements.Water;
                     }
+                    //create the card and add it to DB
                     Spellcard newSpell = new Spellcard(node.get(i).get("Id").getValueAsText(), node.get(i).get("Name").getValueAsText(), elem, Double.parseDouble(node.get(i).get("Damage").getValueAsText()));
                     if (!addCard(newSpell, pack)) {
                         return false;
                     }
                 } else {
+                    //Do the same for monstercards
                     String sp = node.get(i).get("Name").getValueAsText();
                     Elements elem = null;
                     if (sp.contains("Fire")) {
@@ -80,8 +83,8 @@ public class CardHandlerImpl implements getDBConnection, CardHandler {
         statement.close();
     }
 
-    public String getAllCards(String user) throws IOException, SQLException {
-        Responsebuilder respond = Responsebuilder.getInstance();
+    public String getAllCards(String user) throws  SQLException {
+        //Get all the cards from user
         if (user != null) {
             PreparedStatement statement = null;
             Connection con = DBconnectionImpl.getInstance().getConnection();

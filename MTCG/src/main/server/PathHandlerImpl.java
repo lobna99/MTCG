@@ -18,6 +18,7 @@ public class PathHandlerImpl implements PathHandler, Response {
     //----HANDLE EACH PATH AND CALL THE HANDLEREQUEST FUNCTION
     public void handlePath(HTTPRequestImpl request) throws IOException, InterruptedException, SQLException {
         String[] pathsplit = request.getPath().split("/", -2);
+        //check if user is authorized
         if (auth.authorization(request.getToken()) || request.getPath().equals("/users") || request.getPath().equals("/sessions")) {
             switch (pathsplit[1]) {
                 case "users" -> userRequest.handleRequest(Json, request);

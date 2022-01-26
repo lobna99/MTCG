@@ -10,12 +10,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ScoreHandlerImpl implements getDBConnection, Response, ScoreHandler {
+public class ScoreHandlerImpl implements getDBConnection, ScoreHandler {
 
     public ScoreHandlerImpl() {
     }
 
-    public String showScoreboard() throws IOException, SQLException {
+    public String showScoreboard() throws SQLException {
+        //Get the scoreboard
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""

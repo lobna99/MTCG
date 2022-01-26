@@ -21,7 +21,7 @@ public class DeckRequest implements HandleRequest, Response {
         switch (request.getMethod()) {
             case "PUT" -> {
                 if (!deckHandler.configureDeck(node.getJsonnode(request.getContent()), request.getToken())) {
-                    respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "not enough cards");
+                    respond.writeHttpResponse(HttpStatus.BAD_REQUEST, "ERR");
                 } else {
                     respond.writeHttpResponse(HttpStatus.OK, "Deck configurated");
                 }

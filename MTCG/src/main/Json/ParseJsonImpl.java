@@ -8,7 +8,7 @@ import java.io.IOException;
 public class ParseJsonImpl implements ParseJson {
 
     @Override
-    public JsonNode getJsonnode(String content) throws IOException {
+    public JsonNode getJsonnode(String content) throws IOException {//return Jsononode
         ObjectMapper mapper = new ObjectMapper();
         if (content != "") {
             return mapper.readTree(content);

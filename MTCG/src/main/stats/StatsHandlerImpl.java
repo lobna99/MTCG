@@ -16,6 +16,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
     }
 
     public String getScore(String user) throws SQLException, IOException {
+        //get the whole score of user
         PreparedStatement statement = null;
         Connection con = DBconnectionImpl.getInstance().getConnection();
         statement = con.prepareStatement("""
@@ -39,6 +40,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
         return response;
     }
 
+    //Get elo of user
     public int getELO(String user) throws SQLException {
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
@@ -61,6 +63,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
     }
 
     public int calculateElo(int elo1, int elo2, double r) {
+        //calculate Elo every round
         int k = 40;
         int Ea;
         if (elo1 >= 2400 && elo2 >= 2400) {
@@ -72,6 +75,7 @@ public class StatsHandlerImpl implements getDBConnection, StatsHandler {
     }
 
     public void updateStats(String user, int lost, int won, int elo, float ratio) throws SQLException {
+        //update all stats
         Connection con = DBconnectionImpl.getInstance().getConnection();
         PreparedStatement inBattle = con.prepareStatement("""
                 UPDATE users

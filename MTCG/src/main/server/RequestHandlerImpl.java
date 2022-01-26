@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 
 
-public class RequestHandlerImpl implements Runnable, RequestHandler {
+public class RequestHandlerImpl implements Runnable, RequestHandler {//Runnable for threads
     private final Socket socket;
     private final PrintWriter output;
     private final BufferedReader in;
@@ -22,9 +22,9 @@ public class RequestHandlerImpl implements Runnable, RequestHandler {
     @Override
     public void run() {
         try {
-            responsebuilder.setOutput(output);
-            currentRequest.getHttpsContent(in);
-            handlerequests();
+            responsebuilder.setOutput(output);//Set the responsebuilder to user everywhere
+            currentRequest.getHttpsContent(in);//get the current Request
+            handlerequests();//handle current request
         } catch (IOException | InterruptedException | SQLException e) {
             System.err.println(Thread.currentThread().getName() + " Error: ");
             e.printStackTrace();

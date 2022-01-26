@@ -6,6 +6,7 @@ public enum Elements {
     Water(2);
 
 
+
     public int elem;
 
     Elements(int element) {
